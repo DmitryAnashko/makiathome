@@ -1,0 +1,6 @@
+.bootstrap/
+.runtime/
+.venv/
+__pycache__/
+.discord-token
+.discord-token.tmp
