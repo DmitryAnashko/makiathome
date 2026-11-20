@@ -3,9 +3,30 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
-from bot import Player, Request, VoiceAudio, bot, match_songs
+from bot import IMPORTANT_GIF_URL, Player, Request, VoiceAudio, bot, match_songs
 from controls import PlaybackControls, QueueView
 from youtube import MusicError, Track, parse_query
+
+
+class ChatCommandTests(unittest.IsolatedAsyncioTestCase):
+    async def test_help_privately_lists_every_command(self):
+        interaction = SimpleNamespace(response=AsyncMock())
+        await bot.tree.get_command("help").callback(interaction)
+        reply = interaction.response.send_message.await_args
+        self.assertTrue(reply.kwargs["ephemeral"])
+        for command in bot.tree.get_commands():
+            self.assertIn(f"`/{command.name}`", reply.args[0])
+
+    async def test_important_posts_in_chat_with_link_fallback(self):
+        interaction = SimpleNamespace(response=AsyncMock(), app_permissions=SimpleNamespace(embed_links=True))
+        command = bot.tree.get_command("important")
+        await command.callback(interaction)
+        reply = interaction.response.send_message.await_args
+        self.assertFalse(reply.kwargs.get("ephemeral", False))
+        self.assertEqual(reply.kwargs["embed"].image.url, IMPORTANT_GIF_URL)
+        interaction.app_permissions.embed_links = False
+        await command.callback(interaction)
+        interaction.response.send_message.assert_awaited_with(IMPORTANT_GIF_URL)
 
 
 class PlaybackTests(unittest.IsolatedAsyncioTestCase):

@@ -16,6 +16,7 @@ from controls import PlaybackControls, show_queue
 from youtube import MusicError, Track, YouTube, parse_query
 
 EMPTY_CHANNEL_SECONDS = 120
+IMPORTANT_GIF_URL = "https://media.tenor.com/c-FTkfRXAroAAAAC/why-are.gif"
 
 
 class VoiceAudio(discord.FFmpegOpusAudio):
@@ -194,7 +195,8 @@ class MusicBot(discord.Client):
         self.installed.add(guild.id)
 
     async def on_ready(self):
-        permissions = discord.Permissions(view_channel=True, send_messages=True, connect=True, speak=True)
+        permissions = discord.Permissions(view_channel=True, send_messages=True, embed_links=True,
+                                          connect=True, speak=True)
         invite = discord.utils.oauth_url(self.user.id, permissions=permissions,
                                          scopes=("bot", "applications.commands"))
         print(f"Online as {self.user}. Add this bot to your server:\n{invite}", flush=True)
@@ -350,6 +352,25 @@ async def leave(interaction: discord.Interaction):
         bot.players.pop(interaction.guild_id)
         await player.close()
     await interaction.edit_original_response(content="Left the voice channel and cleared the queue.")
+
+
+@bot.tree.command(name="help", description="List Maki's commands and playback controls.")
+async def help_command(interaction: discord.Interaction):
+    lines = ["**Maki at Home commands**"]
+    for command in bot.tree.get_commands():
+        lines.append(f"`/{command.name}` — {command.description}")
+    lines.append("\nJoin voice and try `/play query:green day`. The Playing message has "
+                 "**Pause / Resume**, **Skip**, and **Queue** buttons.")
+    await interaction.response.send_message("\n".join(lines), ephemeral=True)
+
+
+@bot.tree.command(description="Ill tell you a secret")
+async def important(interaction: discord.Interaction):
+    if interaction.app_permissions.embed_links:
+        embed = discord.Embed().set_image(url=IMPORTANT_GIF_URL)
+        await interaction.response.send_message(embed=embed)
+    else:
+        await interaction.response.send_message(IMPORTANT_GIF_URL)
 
 
 @bot.tree.error

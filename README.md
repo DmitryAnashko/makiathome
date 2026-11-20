@@ -26,7 +26,7 @@ The Python packages include FFmpeg, Node.js, and Discord voice encryption suppor
 
 Maki needs **View Channel**, **Connect**, and **Speak** in voice, plus **View Channel** and **Send Messages** where you use commands. The default privileged-intent settings work.
 
-## Music controls
+## Commands
 
 | Command | What it does |
 | --- | --- |
@@ -34,6 +34,10 @@ Maki needs **View Channel**, **Connect**, and **Speak** in voice, plus **View Ch
 | `/queue` | See who requested each track and remove one of your own upcoming songs. |
 | `/skip` | Skip the current song, including one that is still loading. |
 | `/leave` | Clear this server's queue and disconnect. |
+| `/help` | Show a private list of commands and playback controls. |
+| `/important` | Post the “Why are you gay?” interview GIF in the current text channel. |
+
+Anyone can use `/help` and `/important` from text chat. Give Maki **Embed Links** permission there to display the GIF inline.
 
 The **Playing** message has **Pause / Resume**, **Skip**, and **Queue** buttons for listeners in Maki's voice channel. Each server has its own queue and one active voice channel. When the last listener leaves, Maki waits two minutes before clearing the queue and disconnecting. Rejoin during those two minutes to keep the session.
 
